@@ -56,9 +56,15 @@ class SaleOrder(models.Model):
         res = super()._finalize_invoices(invoices, references)
         for invoice in invoices.values():
             payment_vals = payment_vals_by_invoice[invoice]
-            if invoice.payment_mode_id.id == payment_vals['payment_mode_id']:
+            if (
+                invoice.payment_mode_id.id == payment_vals['payment_mode_id']
+                or not payment_vals['payment_mode_id']
+            ):
                 payment_vals.pop("payment_mode_id")
-            if invoice.partner_bank_id.id == payment_vals["partner_bank_id"]:
+            if (
+                invoice.partner_bank_id.id == payment_vals["partner_bank_id"]
+                or not payment_vals['partner_bank_id']
+            ):
                 payment_vals.pop("partner_bank_id")
             if payment_vals:
                 invoice.write(payment_vals)
